@@ -2,6 +2,7 @@
 #author: Diya Das
 #Date: 2018-11-21
 
+library(dplyr)
 library(ggplot2)
 library(scales)
 library(grid)
@@ -17,6 +18,8 @@ df <- data.frame(
                   "Finance Agent, EYH", "Signatory, EYH"),
   org = c("Princeton University", "UC Berkeley", "UC Berkeley", "EYH", "EYH", "EYH"))
 
+df_rect <- df %>% filter(as.character(x1) != as.character(x2))
+df_point <- df %>% filter(as.character(x1) == as.character(x2))
 
 no_style <- theme(axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
@@ -25,15 +28,15 @@ no_style <- theme(axis.ticks.y = element_blank(),
 
 p <- ggplot() +
   scale_x_date(labels = date_format("%m-%Y")) +
-  geom_rect(data = df, 
+  geom_rect(data = df_rect, 
             mapping = aes(xmin = as.Date(paste(1, x1), "%d %b %Y"),
                           xmax = as.Date(paste(1, x2), "%d %b %Y"),
                           ymin = y1, ymax = y2, fill = org),
             color = "black", alpha = 0.5) +
-  geom_text(data = df, aes(x = as.Date(paste(1, x1), "%d %b %Y") +
+  geom_text(data = df_rect, aes(x = as.Date(paste(1, x1), "%d %b %Y") +
                              (as.Date(paste(1, x2), "%d %b %Y") -
                                 as.Date(paste(1, x1), "%d %b %Y")) / 2,
                            y = y1 + (y2 - y1) / 2, label = rect_labels),
-            size = 4) + facet_grid(category ~ ., switch="y") +
+            size = 4) + facet_grid(category ~ ., switch = "y") +
   labs(x = "Year", y = "")  + no_style
-
+p
