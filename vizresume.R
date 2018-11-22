@@ -12,9 +12,9 @@ df <- data.frame(
   y2 = c(1, 1, 1),
   category = c(rep("Academic Position", 3)),
   rect_labels = c("AB", "PhD", "Postdoc"))
+
 ggplot() +
   scale_x_date(labels = date_format("%m-%Y")) +
-  scale_y_continuous(name = "y") +
   geom_rect(data = df, mapping = aes(xmin = as.Date(paste(1, x1), "%d %b %Y"),
                                      xmax = as.Date(paste(1, x2), "%d %b %Y"),
                                      ymin = y1, ymax = y2, fill = category),
@@ -24,7 +24,7 @@ ggplot() +
                                 as.Date(paste(1, x1), "%d %b %Y")) / 2,
                            y = y1 + (y2 - y1) / 2, label = rect_labels),
             size = 4) +
-  xlab("Year") + ylab("Academic Position")  +
+  labs(x = "Year", y = "Academic Position")  +
   theme(axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
         panel.background = element_blank(),
