@@ -16,13 +16,16 @@ tlorder <- na.omit(gs_read(ss = gs_title("Resume - projects and achievements"),
 df$category <- factor(df$category, levels = tlorder)
 df <- df %>% group_by(category) %>% mutate(
   y1n = y1 - mean(y1),
-  y2n = y2 - mean(y1))
+  y2n = y2 - mean(y1)) %>% ungroup()
 df$name_wrap <- mapply(function(name, wraplen) str_wrap(name, wraplen),
                       df$name,
                       df$wraplen)
 
-df_rect <- df %>% filter(as.character(start) != as.character(end))
-df_point <- df %>% filter(as.character(start) == as.character(end))
+for (x in unique(df$org)) df <- add_row(df, category = df$category[1],
+                                        wraplen = 1, org = x)
+
+df_rect <- df %>% filter(as.character(start) != as.character(end) | is.na(start))
+df_point <- df %>% filter(as.character(start) == as.character(end) | is.na(start))
 
 no_style <- theme(axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
@@ -30,7 +33,7 @@ no_style <- theme(axis.ticks.y = element_blank(),
 
 p <- ggplot() +
   scale_x_date(labels = date_format("%m-%Y")) +
-  geom_rect(data = df, 
+  geom_rect(data = df_rect, 
             mapping = aes(xmin = as.Date(paste(1, start), "%d %b %Y"),
                           xmax = as.Date(paste(1, end), "%d %b %Y"),
                           ymin = y1n, ymax = y2n, 
@@ -41,6 +44,12 @@ p <- ggplot() +
                                 as.Date(paste(1, start), "%d %b %Y")) / 2,
                            y = y1n + (y2n - y1n) / 2, 
                            label = name_wrap), size = 3, lineheight = 0.7) + 
-  facet_grid(category ~ ., switch = "y", labeller = label_wrap_gen(width=20)) +
+  geom_point(data = df_point,
+             mapping = aes(x = as.Date(paste(1, start), "%d %b %Y"),
+                           y = (y1n + y2n)/2, 
+                           colour = wrap_format(28)(org))) +
+  scale_colour_discrete(guide = "none") + 
+  facet_grid(category ~ ., switch = "y",
+             labeller = label_wrap_gen(width = 20)) +
   labs(x = "Year", y = "")  + no_style
 p
