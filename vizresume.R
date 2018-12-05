@@ -1,6 +1,6 @@
-#title: Visual Resume (Timelines)
-#author: Diya Das
-#Date: 2018-11-21
+# Title: Visual Resume (Timelines)
+# Author: Diya Das
+# Last revised: Tue Dec  4 18:06:34 2018
 
 library(dplyr)
 library(ggplot2)
@@ -22,6 +22,7 @@ df$name_wrap <- mapply(function(name, wraplen) str_wrap(name, wraplen),
                       df$wraplen)
 
 for (x in unique(df$org)) df <- add_row(df, category = df$category[1],
+                                        type = "Publication",
                                         wraplen = 1, org = x)
 
 df_rect <- df %>% filter(as.character(start) != as.character(end) | is.na(start))
@@ -43,13 +44,15 @@ p <- ggplot() +
                              (as.Date(paste(1, end), "%d %b %Y") -
                                 as.Date(paste(1, start), "%d %b %Y")) / 2,
                            y = y1n + (y2n - y1n) / 2, 
-                           label = name_wrap), size = 3, lineheight = 0.7) + 
+                           label = name_wrap), size = 2.8, lineheight = 0.7) + 
   geom_point(data = df_point,
              mapping = aes(x = as.Date(paste(1, start), "%d %b %Y"),
                            y = (y1n + y2n)/2, 
-                           colour = wrap_format(28)(org))) +
+                           colour = wrap_format(28)(org),
+                           shape = type)) + 
   scale_colour_discrete(guide = "none") + 
   facet_grid(category ~ ., switch = "y",
              labeller = label_wrap_gen(width = 20)) +
   labs(x = "Year", y = "")  + no_style
 p
+
