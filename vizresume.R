@@ -95,7 +95,7 @@ icon_plot <- ggplot(data.frame()) + geom_point() + xlim(0, 1) + ylim(0.5, 6.5)+
                                      label = type),
             hjust = 0, size = 2.8) + theme_nothing() 
 
-quartz(width = 9.5 , height = 6.6)
+png(filename = "resume.png", width = 9.5 , height = 6.6, units = "in", res = 320)
 lay <- rbind(c(1,1,1),
              c(2,2,3))
 grid.arrange(grobs = list(ggplotGrob(p + theme(legend.position = "none")),
@@ -103,4 +103,5 @@ grid.arrange(grobs = list(ggplotGrob(p + theme(legend.position = "none")),
                           ggplotGrob(icon_plot)), 
              layout_matrix = lay,
              heights = unit(c(5.2, 1), c("in", "in")))
+dev.off()
 
