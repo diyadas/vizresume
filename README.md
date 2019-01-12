@@ -31,22 +31,19 @@ need to update line 12 of the R script.
 
 ## For R:
 1. Install the following R packages:
-`dplyr`: Used for data grouping to center within facets.
-`ggplot2`: Used for graphing.
-`scales`: Used for transparency (`alpha`).
-`grid`: Used for graphics layout.
-`googlesheets`: Used to extract data from a Google spreadsheet.
-`stringr`: Used for wrapping labels.
-`emojifont`: Used for Font Awesome icons (as text annotations, because I couldn't figure out custom scalable shapes in ggplot2...).
-`cowplot`: Used for graphing (`theme_nothing`).
-`gridExtra`: Used for graphics layout.
+- `dplyr`: Used for data grouping to center within facets.
+- `ggplot2`: Used for graphing.
+- `scales`: Used for transparency (`alpha`).
+- `grid`: Used for graphics layout.
+- `googlesheets`: Used to extract data from a Google spreadsheet.
+- `stringr`: Used for wrapping labels.
+- `emojifont`: Used for Font Awesome icons (as text annotations, because I couldn't figure out custom scalable shapes in ggplot2...).
+- `cowplot`: Used for graphing (`theme_nothing`).
+- `gridExtra`: Used for graphics layout.
 
-2. Download `Font Awesome 5 Free-Solid-900.otf` and move it to the `fonts` 
-subdirectory of the `emojifont` package.
+2. Download [`Font Awesome 5 Free-Solid-900.otf`](https://fontawesome.com/how-to-use/on-the-desktop/setup/getting-started) and move it to the `fonts` subdirectory of the `emojifont` package.
 
-3. Source `vizresume.R`.
-
-### Dependencies
+3. Run `vizresume.R`.
 
 ## History (and credit where credit is due)
 My colleague Nelle Varoquaux (@nelle) has been encouraging me to record my 
