@@ -1,6 +1,15 @@
 # Title: Visual Resume (Timelines)
 # Author: Diya Das
-# Last revised: Sat Dec  8 23:16:53 2018
+# Source repo: github.com/diyadas/vizresume
+# Last revised: Fri Jan 11 12:43:11 2019
+
+# Description: This script loads activities from a Google spreadsheet and plots
+# a visual resume, color-coded by institutional affiliation. Please see the 
+# README for the GitHub repo to get started. Some data entry is required before 
+# the script can be used.
+
+# Input name of Google spreadsheet below:
+name_gs <- "Resume - projects and achievements"
 
 library(dplyr)
 library(ggplot2)
@@ -12,45 +21,61 @@ library(emojifont)
 library(cowplot)
 library(gridExtra)
 
-load.fontawesome(font = "Font Awesome 5 Free-Solid-900.otf") #icons 
-fa <- data.frame(type = c("Award", "Poster", "Publication", 
-                           "Software", "Talk", "Workshop"),
-                 fnt = fontawesome(c('fa-trophy', 'fa-pie-chart', 
-                                     'fa-pencil', 
-                                   'fa-code', 'fa-comment', 
-                                   'fa-wrench')))
+# Load icons and map to activity type
+## Make sure "type" matches the "type" column of the Google spreadsheet.
+load.fontawesome(font = "Font Awesome 5 Free-Solid-900.otf") 
+fa <- data.frame(type = c("Award", 
+                          "Poster", 
+                          "Publication",
+                          "Software", 
+                          "Talk", 
+                          "Workshop"),
+                 fnt = fontawesome(c('fa-trophy', 
+                                     'fa-pie-chart', 
+                                     'fa-pencil',
+                                     'fa-code', 
+                                     'fa-comment',
+                                     'fa-wrench')))
 
-df <- gs_read(ss = gs_title("Resume - projects and achievements"), 
-              ws = "Sheet1")
-tlorder <- na.omit(gs_read(ss = gs_title("Resume - projects and achievements"), 
-              ws = "Sheet2")$Timeline)
-df$category <- factor(df$category, levels = tlorder)
+# Load data from spreadsheet
+df <- gs_read(ss = gs_title(name_gs), ws = "Sheet1") # your achievements
+tlorder <- na.omit(gs_read(ss = gs_title(name_gs), ws = "Sheet2")$Timeline)  
+          # order of categories on timeline should be specified in Sheet2
+df$category <- factor(df$category, levels = tlorder) # reorder factor levels
+
+# Center rows within each category
 df <- df %>% group_by(category) %>% mutate(
   y1n = y1 - mean(y1),
   y2n = y2 - mean(y1)) %>% ungroup()
+
+# Wrap long names for activities 
 df$name_wrap <- mapply(function(name, wraplen) str_wrap(name, wraplen),
                       df$name,
                       df$wraplen)
 
+# Add a row for each organization so NAs don't result in point and bar data with 
+# different levels
 for (x in unique(df$org)) df <- add_row(df, category = df$category[1],
-                                        type = "Publication",
+                                        type = df$type[1],
                                         wraplen = 1, org = x)
-
+# Split data into data to be graphed as bars and data to be font-awesome "points" 
 df_rect <- df %>% filter(as.character(start) != as.character(end) | is.na(start))
 df_point <- df %>% filter(as.character(start) == as.character(end) | is.na(start))
 df_point <- left_join(df_point, fa)
 
+# Define a no_style theme to strip away unwanted labels and formatting
 no_style <- theme(axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y.left = element_blank(),
         axis.title.y = element_blank(),
-        strip.text = element_text(face="bold"),
-        text = element_text(size=8),
-        axis.text.x=element_text(size=8),
-        plot.margin=unit(c(0,0,5.5,0),"pt"),
+        strip.text = element_text(face = "bold"),
+        text = element_text(size = 8),
+        axis.text.x = element_text(size = 8),
+        plot.margin = unit(c(0, 0, 5.5, 0),"pt"),
         plot.title = element_blank()
         ) 
 
+# Create plot (no legend)
 p <- ggplot() +
   scale_x_date(labels = date_format("%Y"), date_breaks = "1 year") +
   geom_rect(data = df_rect, 
@@ -74,7 +99,7 @@ p <- ggplot() +
   facet_grid(category ~ ., switch = "y", labeller = label_wrap_gen(width = 20)) +
   labs(x = "Year", y = "")  + no_style 
 
-# Legend Extraction Code from Luciano Selzer
+# Extract legend from plot to plot in a separate pane, code from Luciano Selzer
 ## https://stackoverflow.com/a/11886071/743568
 g_legend <- function(a.gplot){
   tmp <- ggplot_gtable(ggplot_build(a.gplot))
@@ -83,6 +108,8 @@ g_legend <- function(a.gplot){
   return(legend)}
 legend <- g_legend(p)
 
+# Plot a legend for the font-awesome icons 
+# The font-awesome icons are text annotations so this is a hack.
 annot_point <- data.frame(fa, x = rep(0, nrow(fa)), y = nrow(fa):1)
 
 icon_plot <- ggplot(data.frame()) + geom_point() + xlim(0, 1) + ylim(0.5, 6.5)+
@@ -95,6 +122,7 @@ icon_plot <- ggplot(data.frame()) + geom_point() + xlim(0, 1) + ylim(0.5, 6.5)+
                                      label = type),
             hjust = 0, size = 2.8) + theme_nothing() 
 
+# Create a png and lay out the plots!
 png(filename = "resume.png", width = 9.5 , height = 6.6, units = "in", res = 320)
 lay <- rbind(c(1,1,1),
              c(2,2,3))
