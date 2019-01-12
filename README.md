@@ -29,7 +29,7 @@ need to update line 12 of the R script.
  - "start" and "end": dates of involvement. All activities need both start and end dates.
  - "y1" and "y2": manually choose y axis coordinates for bars. This is needed for offsets so bars don't overlap. Typically, y2 = y1 + 1, but I chose to deviate from this for the "Academic Position" category and used double-height bars.
 
-## For R:
+### Running the script
 1. Install the following R packages:
 - `dplyr`: Used for data grouping to center within facets.
 - `ggplot2`: Used for graphing.
@@ -43,16 +43,17 @@ need to update line 12 of the R script.
 
 2. Download [`Font Awesome 5 Free-Solid-900.otf`](https://fontawesome.com/how-to-use/on-the-desktop/setup/getting-started) and move it to the `fonts` subdirectory of the `emojifont` package.
 
-3. Run `vizresume.R`.
+3. `source('vizresume.R')`
 
 ## History (and credit where credit is due)
 My colleague Nelle Varoquaux (@nelle) has been encouraging me to record my 
 achievements in a Google spreadsheet for ... a long time. This came to a head 
 when she shared a spreadsheet our colleagues had put together to record our 
 activities for our funders. Months later, our colleague Chris Holdgraf 
-(@choldgraf) posted a timeline in Slack generated from this spreadsheet, 
+(@choldgraf) shared a timeline generated from this spreadsheet, 
 filtered for his own activities. He turned it into a GitHub repo that used 
-Binder to run a Jupyter notebook...but I wanted to customize the output. 
+Binder to run a Jupyter notebook...but I wanted to customize the output to add 
+more features. 
 
 Having more experience with graphing in R, I just decided to write my own code. 
 I then decided I was going to fully explore the capabilities of ggplot since I 
