@@ -1,0 +1,90 @@
+---
+title: "vizresume"
+subtitle: "how I made a visual resume<br/>to learn everything I wanted to know about R"
+author: "Diya Das"
+date: "`r icon::fa('twitter')` dotdatdas<br>`r icon::fa('github')` diyadas <br><br>2018-01-22<br>R-Ladies SF"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+# Who Am I?
+
+- a computational biologist studying how stem cells make neurons
+<br><br><br>
+
+The features that led to this project:
+- a perpetual **project starter**
+
+- a former school newspaper **layout editor**
+
+- a postdoc fellow who has to **write progress reports** for funders
+
+- a job-seeker who has spent too much time **writing a resume**
+
+---
+
+class: inverse, center
+
+# The Questions
+
+--
+### How do I remember what to put on my resume? 
+--
+
+** Google spreadsheet **
+
+--
+### How do I prove (fully learn) the skills I list?
+--
+
+** Teach a workshop, or do a project **
+
+--
+### Where do I put my accomplishments that don't fit in 2 pages?
+--
+
+** It's _data viz_ time! **
+---
+class: inverse, center, middle
+# How It Works
+<img src="https://diyadas.github.io/files/resume-diya-das.png" height = 450 >
+
+Roll your own: [github.com/diyadas/vizresume](https://github.com/diyadas/vizresume)
+---
+## What I Wanted to Learn
+- Can **ggplot2** truly do it all? (and how to make it do as much as possible)
+
+--
+
+## What I Actually Learned
+- <font color="teal">Not everything can be reasonably automated, including my layout opinions.</font>
+
+--
+
+- There are more elegant ways, but my code works.
+
+--
+
+- Everyone has already answered all my questions on StackOverflow but I didn't know my questions until I tried to build it.
+
+--
+
+- <small>It is possible to learn _enough_ [**xaringan**] in a few hours the day before a lightning talk.</small> 
+
+--
+<br><br>
+<div align="center"> 
+<h3><a href="https://github.com/diyadas/vizresume">github.com/diyadas/vizresume</a></h3></div>
+<div align="center"> 
+<h3>`r icon::fa('twitter')` dotdatdas &emsp;&emsp;&emsp; `r icon::fa('globe')` diyadas.github.io</h3></div>
+## 
+

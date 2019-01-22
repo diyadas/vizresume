@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>vizresume</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Diya Das" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+    <link href="libs/font-awesome/css/fontawesome-all.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# vizresume
+## how I made a visual resume<br/>to learn everything I wanted to know about R
+### Diya Das
+### <i class="fab  fa-twitter "></i> dotdatdas<br><i class="fab  fa-github "></i> diyadas <br><br>2018-01-22<br>R-Ladies SF
+
+---
+
+
+
+
+# Who Am I?
+
+- a computational biologist studying how stem cells make neurons
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+The features that led to this project:
+- a perpetual **project starter**
+
+- a former school newspaper **layout editor**
+
+- a postdoc fellow who has to **write progress reports** for funders
+
+- a job-seeker who has spent too much time **writing a resume**
+
+---
+
+class: inverse, center
+
+# The Questions
+
+--
+### How do I remember what to put on my resume? 
+--
+
+** Google spreadsheet **
+
+--
+### How do I prove (fully learn) the skills I list?
+--
+
+** Teach a workshop, or do a project **
+
+--
+### Where do I put my accomplishments that don't fit in 2 pages?
+--
+
+** It's _data viz_ time! **
+---
+class: inverse, center, middle
+# How It Works
+&lt;img src="https://diyadas.github.io/files/resume-diya-das.png" height = 450 &gt;
+
+Roll your own: [github.com/diyadas/vizresume](https://github.com/diyadas/vizresume)
+---
+## What I Wanted to Learn
+- Can **ggplot2** truly do it all? (and how to make it do as much as possible)
+
+--
+
+## What I Actually Learned
+- &lt;font color="teal"&gt;Not everything can be reasonably automated, including my layout opinions.&lt;/font&gt;
+
+--
+
+- There are more elegant ways, but my code works.
+
+--
+
+- Everyone has already answered all my questions on StackOverflow but I didn't know my questions until I tried to build it.
+
+--
+
+- &lt;small&gt;It is possible to learn _enough_ [**xaringan**] in a few hours the day before a lightning talk.&lt;/small&gt; 
+
+--
+&lt;br&gt;&lt;br&gt;
+&lt;div align="center"&gt; 
+&lt;h3&gt;&lt;a href="https://github.com/diyadas/vizresume"&gt;github.com/diyadas/vizresume&lt;/a&gt;&lt;/h3&gt;&lt;/div&gt;
+&lt;div align="center"&gt; 
+&lt;h3&gt;<i class="fab  fa-twitter "></i> dotdatdas &amp;emsp;&amp;emsp;&amp;emsp; <i class="fas  fa-globe "></i> diyadas.github.io&lt;/h3&gt;&lt;/div&gt;
+##
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
