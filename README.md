@@ -41,9 +41,7 @@ need to update line 12 of the R script.
 - `cowplot`: Used for graphing (`theme_nothing`).
 - `gridExtra`: Used for graphics layout.
 
-2. Download [`Font Awesome 5 Free-Solid-900.otf`](https://fontawesome.com/how-to-use/on-the-desktop/setup/getting-started) and move it to the `fonts` subdirectory of the `emojifont` package.
-
-3. `source('vizresume.R')`
+2. `source('vizresume.R')`
 
 ## History (and credit where credit is due)
 My colleague Nelle Varoquaux (@nelle) has been encouraging me to record my 

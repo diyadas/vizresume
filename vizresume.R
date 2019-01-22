@@ -23,7 +23,7 @@ library(gridExtra)
 
 # Load icons and map to activity type
 ## Make sure "type" matches the "type" column of the Google spreadsheet.
-load.fontawesome(font = "Font Awesome 5 Free-Solid-900.otf") 
+load.fontawesome(font = "fa-solid-900.ttf")
 fa <- data.frame(type = c("Award", 
                           "Poster", 
                           "Publication",
