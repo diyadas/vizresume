@@ -25,7 +25,7 @@ library(shinyjqui)
 # Load icons and map to activity type
 ## Make sure "type" matches the "type" column of the Google spreadsheet.
 load.fontawesome(font = "fa-solid-900.ttf")
-fa <- data.frame(type = c("Award", 
+fa_default <- data.frame(type = c("Award", 
                           "Poster", 
                           "Publication",
                           "Software", 
@@ -65,9 +65,21 @@ ui <- fluidPage(
                                Tab = "\t"),
                    selected = "\t"),
       # Input: Select order of categories to facet by
-      htmlOutput("tlorder"),
+      h4("Link types to Font Awesome icons (Optional)"),
+      p("Default mappings include Award, Poster, Publication, Software, Talk, Workshop"),
+      p("Uploading a file here will overwrite all mappings. Please do not include a header row."),
+      fileInput("catfile", "Upload a Text File",
+                multiple = TRUE,
+                accept = c("text/csv",
+                           "text/comma-separated-values,text/plain",
+                           ".csv")),
+      radioButtons("catfilesep", "Separator",
+                   choices = c(Comma = ",",
+                               Semicolon = ";",
+                               Tab = "\t"),
+                   selected = "\t"),
       tags$hr(),
-      p("Enter dimensions for exporting as PNG:"),
+      p("Enter dimensions for saved PNG:"),
       numericInput("width","Width (inches)", 9.5),
       numericInput("height","Height (inches)", 6.6),
       tags$hr()
@@ -76,6 +88,7 @@ ui <- fluidPage(
     # Main panel for displaying outputs ----
     mainPanel(
       htmlOutput("selected_data"),
+      downloadButton("export_resume", label = "Download Resume as PNG"),
       plotOutput("plot", height = "600px")
     )
       )
@@ -84,7 +97,7 @@ ui <- fluidPage(
 # Define server logic to read selected file ----
 server <- function(input, output) {
   output$selected_data <- renderText({
-    if (is.null(input$datfile)){
+    if (is.null(input$datfile$datapath)){
       paste("<h4>Plotting From Google Spreadsheet</h4>")
     } else {
       paste("<h4>Plotting Uploaded File</h4>")
@@ -95,7 +108,8 @@ server <- function(input, output) {
     # Load data from spreadsheet
     get_data <- reactive({
       if (!is.null(input$ss_url)) {
-        return(gs_key(input$ss_url, lookup = FALSE) %>% gs_read())
+        key <- extract_key_from_url(input$ss_url)
+        return(gs_key(key, lookup = FALSE) %>% gs_read())
       } else if (!is.null(input$datlist$datapath)) {
         return(read.table(input$datlist$datapath, sep = input$filesep))
       } else {
@@ -106,6 +120,13 @@ server <- function(input, output) {
                   paste("Can't plot a resume without data! Enter URL of a ",
                         "published spreadsheet OR upload data.")))
     df <- get_data()
+    get_fa <- reactive({
+      if (!is.null(input$catfile$datapath)) {
+        return(read.table(input$catlist$datapath, sep = input$catfilesep))
+        } else {
+          return(fa_default)
+    }})
+    fa <- get_fa()
     #tlorder <- na.omit(gs_read(ss = gs_title(name_gs), ws = "Sheet2")$Timeline)  
     # order of categories on timeline should be specified in Sheet2
     #df$category <- factor(df$category, levels = tlorder) # reorder factor levels
@@ -200,12 +221,19 @@ server <- function(input, output) {
                  layout_matrix = lay,
                  heights = unit(c(26/33 * input$height, 5/33 * input$height), c("in", "in")))
     dev.off()
-    system(paste('open', filename))
+    
+    
+    return(filename)
   }
   
-  output$plot <- renderPlot({
-    resume_plot()
-  })
+  output$plot <- renderImage({
+    return(list(src = resume_plot(),
+                contentType = 'image/png',
+                width = 600,
+                height = 400,
+                alt = "This is alternate text")
+    )
+  }, deleteFile = TRUE)
   
   output$tlorder <- renderUI({
     get_data <- reactive({
@@ -221,6 +249,10 @@ server <- function(input, output) {
     
     orderInput(inputId = "tlorder", label = "Drag to Order Categories", 
                tlorder)
+  })
+  
+  output$export_resume <- downloadHandler(paste0("vizresume_", format(Sys.time(), "%Y-%m-%d_%H%M%OS3"),".png"), function(filename) {
+    resume_plot()
   })
   
 }
