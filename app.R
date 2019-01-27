@@ -1,7 +1,7 @@
 # Title: Visual Resume (Timelines)
 # Author: Diya Das
 # Source repo: github.com/diyadas/vizresume
-# Last revised: Fri Jan 25 21:51:51 2019
+# Last revised: Sun Jan 27 00:21:14 2019
 
 # Description: This Shiny app loads activities from a Google spreadsheet and plots
 # a visual resume, color-coded by institutional affiliation. Please see the 
