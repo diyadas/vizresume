@@ -64,7 +64,6 @@ ui <- fluidPage(
                                Semicolon = ";",
                                Tab = "\t"),
                    selected = "\t"),
-      # Input: Select order of categories to facet by
       h4("Link types to Font Awesome icons (Optional)"),
       p("Default mappings include Award, Poster, Publication, Software, Talk, Workshop"),
       p("Uploading a file here will overwrite all mappings. Please do not include a header row."),
@@ -89,6 +88,9 @@ ui <- fluidPage(
     mainPanel(
       htmlOutput("selected_data"),
       downloadButton("export_resume", label = "Download Resume as PNG"),
+      # Input: Select order of categories to facet by
+      htmlOutput("order_selection"),
+      tags$hr(),
       plotOutput("plot", height = "600px")
     )
       )
@@ -116,10 +118,20 @@ server <- function(input, output) {
         return(NA)
       }
     })
+    df <- get_data()
     validate(need(!is.na(get_data()),
                   paste("Can't plot a resume without data! Enter URL of a ",
                         "published spreadsheet OR upload data.")))
-    df <- get_data()
+    
+    get_catlevels <- reactive({
+      if (!is.null(input$timeline_order)) {
+        return(input$timeline_order)
+      } else {
+        return(sort(unique(df$category)))
+      }
+    })
+    df$category <- factor(df$category, levels = get_catlevels()) # reorder factor levels
+    
     get_fa <- reactive({
       if (!is.null(input$catfile$datapath)) {
         return(read.table(input$catlist$datapath, sep = input$catfilesep))
@@ -127,9 +139,7 @@ server <- function(input, output) {
           return(fa_default)
     }})
     fa <- get_fa()
-    #tlorder <- na.omit(gs_read(ss = gs_title(name_gs), ws = "Sheet2")$Timeline)  
-    # order of categories on timeline should be specified in Sheet2
-    #df$category <- factor(df$category, levels = tlorder) # reorder factor levels
+
     
     # Center rows within each category
     df <- df %>% group_by(category) %>% mutate(
@@ -235,19 +245,20 @@ server <- function(input, output) {
     )
   }, deleteFile = TRUE)
   
-  output$tlorder <- renderUI({
+  output$order_selection <- renderUI({
     get_data <- reactive({
       if (!is.null(input$ss_url)) {
-        return(gs_key(input$ss_url, lookup = FALSE) %>% gs_read())
+        key <- extract_key_from_url(input$ss_url)
+        return(gs_key(key, lookup = FALSE) %>% gs_read())
       } else if (!is.null(input$datlist$datapath)) {
         return(read.table(input$datlist$datapath, sep = input$filesep))
       } else {
         return(NA)
       }
     })
-    tlorder <- levels(get_data()$category)
+    tlorder <- levels(factor(get_data()$category))
     
-    orderInput(inputId = "tlorder", label = "Drag to Order Categories", 
+    orderInput(inputId = "timeline", label = "Drag to Order Categories.", 
                tlorder)
   })
   
