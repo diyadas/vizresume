@@ -1,14 +1,12 @@
 # Title: Visual Resume (Timelines)
 # Author: Diya Das
 # Source repo: github.com/diyadas/vizresume
-# Last revised: Sun Jan 27 00:21:14 2019
+# Last revised: Sun Jan 27 20:52:39 2019
 
 # Description: This Shiny app loads activities from a Google spreadsheet and plots
 # a visual resume, color-coded by institutional affiliation. Please see the 
 # README for the GitHub repo to get started. Some data entry is required before 
 # the Shiny app can be used.
-
-# Input name of Google spreadsheet below:
 
 library(shiny)
 library(dplyr)
@@ -105,11 +103,10 @@ server <- function(input, output) {
       paste("<h4>Plotting Uploaded File</h4>")
     }
   })
-  
-  resume_plot <- function(){
+  resume_gather <- function(){
     # Load data from spreadsheet
     get_data <- reactive({
-      if (!is.null(input$ss_url)) {
+      if (input$ss_url != "") {
         key <- extract_key_from_url(input$ss_url)
         return(gs_key(key, lookup = FALSE) %>% gs_read())
       } else if (!is.null(input$datlist$datapath)) {
@@ -119,10 +116,8 @@ server <- function(input, output) {
       }
     })
     df <- get_data()
-    validate(need(!is.na(get_data()),
-                  paste("Can't plot a resume without data! Enter URL of a ",
-                        "published spreadsheet OR upload data.")))
-    
+    if(is.na(df)) return(NA)
+        
     get_catlevels <- reactive({
       if (!is.null(input$timeline_order)) {
         return(input$timeline_order)
@@ -219,25 +214,29 @@ server <- function(input, output) {
                                          y = y,
                                          label = type),
                 hjust = 0, size = 2.8) + theme_nothing() 
-    
-    # Create a png and lay out the plots!
-    filename <- paste0("vizresume_", format(Sys.time(), "%Y-%m-%d_%H%M%OS3"),".png")
+    return(list(p = p, legend = legend, icon_plot = icon_plot))
+  }
+  resume_plot <- function(filename, pobj){
     png(file = filename, width = input$width, height = input$height, units = "in", res = 320)
     lay <- rbind(c(1,1,1),
                  c(2,2,3))
-    grid.arrange(grobs = list(ggplotGrob(p + theme(legend.position = "none")),
-                              legend,
-                              ggplotGrob(icon_plot)), 
+    grid.arrange(grobs = list(ggplotGrob(pobj$p + theme(legend.position = "none")),
+                              pobj$legend,
+                              ggplotGrob(pobj$icon_plot)), 
                  layout_matrix = lay,
                  heights = unit(c(26/33 * input$height, 5/33 * input$height), c("in", "in")))
     dev.off()
-    
-    
-    return(filename)
   }
-  
   output$plot <- renderImage({
-    return(list(src = resume_plot(),
+    pobj <- resume_gather()
+    validate(need(!is.na(pobj),
+                  paste("Can't plot a resume without data! Enter URL of a ",
+                        "published spreadsheet OR upload data.")))
+    # Create a png and lay out the plots!
+    filename <- paste0("vizresume_", format(Sys.time(), "%Y-%m-%d_%H%M%OS3"),".png")
+    resume_plot(filename, pobj)
+    
+    return(list(src = filename,
                 contentType = 'image/png',
                 width = 600,
                 height = 400,
@@ -247,7 +246,7 @@ server <- function(input, output) {
   
   output$order_selection <- renderUI({
     get_data <- reactive({
-      if (!is.null(input$ss_url)) {
+      if (input$ss_url != "") {
         key <- extract_key_from_url(input$ss_url)
         return(gs_key(key, lookup = FALSE) %>% gs_read())
       } else if (!is.null(input$datlist$datapath)) {
@@ -256,16 +255,17 @@ server <- function(input, output) {
         return(NA)
       }
     })
+    validate(need(!is.na(get_data()),""))
     tlorder <- levels(factor(get_data()$category))
-    
     orderInput(inputId = "timeline", label = "Drag to Order Categories.", 
                tlorder)
   })
   
-  output$export_resume <- downloadHandler(paste0("vizresume_", format(Sys.time(), "%Y-%m-%d_%H%M%OS3"),".png"), function(filename) {
-    resume_plot()
-  })
-  
+ output$export_resume <- downloadHandler(paste0("vizresume_", format(Sys.time(), "%Y-%m-%d_%H%M%OS3"),".png"), function(filename) {
+   pobj <- resume_gather()
+   resume_plot(filename, pobj)
+ })
+
 }
 
 # Run the app ----
