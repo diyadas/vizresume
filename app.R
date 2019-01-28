@@ -24,24 +24,23 @@ library(shinyjqui)
 ## Make sure "type" matches the "type" column of the Google spreadsheet.
 load.fontawesome(font = "fa-solid-900.ttf")
 fa_default <- data.frame(type = c("Award", 
-                          "Poster", 
-                          "Publication",
-                          "Software", 
-                          "Talk", 
-                          "Workshop"),
-                 fnt = fontawesome(c('fa-trophy', 
-                                     'fa-pie-chart', 
-                                     'fa-pencil',
-                                     'fa-code', 
-                                     'fa-comment',
-                                     'fa-wrench')))
-
+                                  "Poster", 
+                                  "Publication",
+                                  "Software", 
+                                  "Talk", 
+                                  "Workshop"),
+                         fnt = fontawesome(c('fa-trophy', 
+                                             'fa-pie-chart', 
+                                             'fa-pencil',
+                                             'fa-code', 
+                                             'fa-comment',
+                                             'fa-wrench')))
 
 # Define UI for application
 ui <- fluidPage(
   tags$style(".shiny-input-container { margin-bottom: 0px; margin-top: 0px }
-             #datfile_progress { margin-bottom: 0px } .checkbox {
-             margin-top: 0px }"),
+             #datfile_progress { margin-bottom: 0px } 
+             #catfile_progress { margin-bottom: 0px }"),
   # Application title
   titlePanel("Visual Resume"),
   # Sidebar layout with input and output definitions ----
@@ -80,7 +79,7 @@ ui <- fluidPage(
       numericInput("width","Width (inches)", 9.5),
       numericInput("height","Height (inches)", 6.6),
       tags$hr()
-      ),
+    ),
     
     # Main panel for displaying outputs ----
     mainPanel(
@@ -91,8 +90,8 @@ ui <- fluidPage(
       tags$hr(),
       plotOutput("plot", height = "600px")
     )
-      )
   )
+)
 
 # Define server logic to read selected file ----
 server <- function(input, output) {
@@ -107,8 +106,9 @@ server <- function(input, output) {
     # Load data from spreadsheet
     get_data <- reactive({
       if (input$ss_url != "") {
-        key <- extract_key_from_url(input$ss_url)
-        return(gs_key(key, lookup = FALSE) %>% gs_read())
+        dat <- tryCatch(gs_url(input$ss_url, lookup = FALSE) %>% gs_read(),
+                        error=function(err) NA)
+        return(dat)
       } else if (!is.null(input$datlist$datapath)) {
         return(read.table(input$datlist$datapath, sep = input$filesep))
       } else {
@@ -117,7 +117,7 @@ server <- function(input, output) {
     })
     df <- get_data()
     if(is.na(df)) return(NA)
-        
+    
     get_catlevels <- reactive({
       if (!is.null(input$timeline_order)) {
         return(input$timeline_order)
@@ -130,11 +130,11 @@ server <- function(input, output) {
     get_fa <- reactive({
       if (!is.null(input$catfile$datapath)) {
         return(read.table(input$catlist$datapath, sep = input$catfilesep))
-        } else {
-          return(fa_default)
-    }})
+      } else {
+        return(fa_default)
+      }})
     fa <- get_fa()
-
+    
     
     # Center rows within each category
     df <- df %>% group_by(category) %>% mutate(
@@ -230,7 +230,7 @@ server <- function(input, output) {
   output$plot <- renderImage({
     pobj <- resume_gather()
     validate(need(!is.na(pobj),
-                  paste("Can't plot a resume without data! Enter URL of a ",
+                  paste("Can't plot a resume without data! Enter URL of a",
                         "published spreadsheet OR upload data.")))
     # Create a png and lay out the plots!
     filename <- paste0("vizresume_", format(Sys.time(), "%Y-%m-%d_%H%M%OS3"),".png")
@@ -247,8 +247,9 @@ server <- function(input, output) {
   output$order_selection <- renderUI({
     get_data <- reactive({
       if (input$ss_url != "") {
-        key <- extract_key_from_url(input$ss_url)
-        return(gs_key(key, lookup = FALSE) %>% gs_read())
+        dat <- tryCatch(gs_url(input$ss_url, lookup = FALSE) %>% gs_read(),
+                        error=function(err) NA)
+        return(dat)
       } else if (!is.null(input$datlist$datapath)) {
         return(read.table(input$datlist$datapath, sep = input$filesep))
       } else {
@@ -261,11 +262,11 @@ server <- function(input, output) {
                tlorder)
   })
   
- output$export_resume <- downloadHandler(paste0("vizresume_", format(Sys.time(), "%Y-%m-%d_%H%M%OS3"),".png"), function(filename) {
-   pobj <- resume_gather()
-   resume_plot(filename, pobj)
- })
-
+  output$export_resume <- downloadHandler(paste0("vizresume_", format(Sys.time(), "%Y-%m-%d_%H%M%OS3"),".png"), function(filename) {
+    pobj <- resume_gather()
+    resume_plot(filename, pobj)
+  })
+  
 }
 
 # Run the app ----
