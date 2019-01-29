@@ -36,7 +36,7 @@ An example of the output:
 - `emojifont`: Used for Font Awesome icons (as text annotations, because of difficulty posed by custom scalable shapes in ggplot2).
 - `cowplot`: Used for graphing (`theme_nothing`).
 - `gridExtra`: Used for graphics layout.
--`shinyjqui`: Adds responsiveness to facet on category.
+- `shinyjqui`: Adds responsiveness to facet on category.
 
 2. Within RStudio, open `app.R` and click Run this app.
 
