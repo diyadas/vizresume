@@ -70,4 +70,5 @@ R-Ladies SF meetup who asked if I had any intention of turning my script into an
 ## What's next
 - Binder support.
 - Move data visualization-specific variables from Google sheets input into Shiny app input.
+- Document available options for FontAwesome icons. Did someone make a Shiny app for this?
 - Hyperlinks / tooltips to provide more details, for individual activities.
