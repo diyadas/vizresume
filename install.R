@@ -1,7 +1,7 @@
+install.packages('shiny')
 install.packages('dplyr')
 install.packages('ggplot2')
 install.packages('scales')
-install.packages('grid')
 install.packages('googlesheets')
 install.packages('stringr')
 install.packages('emojifont')
